@@ -29,6 +29,7 @@ const updateProduct = async (req, res) => {
         category,
         company,
         featured,
+        stock,
         _id,
     } = req.body;
     await Product.findOneAndUpdate(
@@ -41,6 +42,7 @@ const updateProduct = async (req, res) => {
             category,
             company,
             featured,
+            stock,
         },
         {
             new: true,
