@@ -1,7 +1,37 @@
 const Product = require('../models/Product');
 
 const getAllProducts = async (req, res) => {
-    const products = await Product.find();
+    const { search, category, company, price, sort } = req.query;
+    const queryObject = {};
+    if (search) {
+        queryObject.name = { $regex: search, $options: 'i' };
+    }
+    if (category && category !== 'all') {
+        queryObject.category = category;
+    }
+    if (company && company !== 'all') {
+        queryObject.company = company;
+    }
+    if (price) {
+        queryObject.price = { $lte: price };
+    }
+
+    let results = Product.find(queryObject);
+    if (sort === 'price-lowest') {
+        results = results.sort('price');
+    }
+    if (sort === 'price-highest') {
+        results = results.sort('-price');
+    }
+    if (sort === 'name-a') {
+        results = results.sort('name');
+    }
+    if (sort === 'name-z') {
+        results = results.sort('-name');
+    }
+
+    const products = await results;
+    console.log(products.length);
     res.status(200).json(products);
 };
 
