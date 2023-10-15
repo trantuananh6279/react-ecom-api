@@ -2,7 +2,7 @@ const { Schema, default: mongoose } = require('mongoose');
 
 const OrderSchema = new Schema(
     {
-        line_items: Object,
+        cartItem: Object,
         name: String,
         email: String,
         city: String,

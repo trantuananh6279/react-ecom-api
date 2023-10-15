@@ -11,6 +11,7 @@ const mongooseConnect = require('./lib/mongodb');
 const authRouter = require('./routers/authRouter');
 const productRouter = require('./routers/productRouter');
 const uploadRouter = require('./routers/uploadRouter');
+const cartRouter = require('./routers/cartRouter');
 // const orderRouter = require('./routers/orderRouter')
 
 app.use(cors());
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/upload', uploadRouter);
+app.use('/api/v1/carts', cartRouter);
 // app.use('/api/v1/orders', orderRouter);
 
 const port = process.env.PORT || 3000;

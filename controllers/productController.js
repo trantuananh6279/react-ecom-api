@@ -31,7 +31,6 @@ const getAllProducts = async (req, res) => {
     }
 
     const products = await results;
-    console.log(products.length);
     res.status(200).json(products);
 };
 
