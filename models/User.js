@@ -17,6 +17,22 @@ const UserSchema = new Schema(
             type: String,
             required: true,
         },
+        role: {
+            type: String,
+            enum: ['admin', 'user'],
+        },
+        verificationToken: String,
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        verified: Date,
+        passwordToken: {
+            type: String,
+        },
+        passwordTokenExpirationDate: {
+            type: Date,
+        },
     },
     { timestamps: true }
 );
