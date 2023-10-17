@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const crypto = require('crypto');
 const sendVerificationEmail = require('../utils/sendVerificationEmail');
+const sendResetPasswordEmail = require('../utils/sendResetPasswordEmail');
 
 const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -63,9 +64,45 @@ const verifyEmail = async (req, res) => {
     res.status(200).json({ msg: 'Email verified' });
 };
 
-const forgotPassword = async (req, res) => {};
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+        res.status(400).json({ msg: 'Email does not exist' });
+        return;
+    }
+    const passwordToken = crypto.randomBytes(70).toString('hex');
+    const origin = 'http://localhost:5173';
+    const tenMinutes = 1000 * 60 * 10;
+    user.passwordToken = passwordToken;
+    user.passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+    await user.save();
+    await sendResetPasswordEmail({
+        name: user.name,
+        email: user.email,
+        passwordToken: user.passwordToken,
+        origin,
+    });
+    res.status(200).json({
+        msg: 'Please check your email to reset password',
+    });
+};
 
-const resetPassword = async (req, res) => {};
+const resetPassword = async (req, res) => {
+    const { passwordToken, email, password } = req.body;
+    if (!email || !passwordToken || !password) {
+        res.status(400).json({ msg: 'Please provide all of values' });
+    }
+    const user = await User.findOne({ email });
+    if (!user || user.passwordToken !== passwordToken) {
+        res.status(400).json({ msg: 'Email does not exist' });
+    }
+    user.passwordToken = null;
+    user.passwordTokenExpirationDate = null;
+    user.password = password;
+    await user.save();
+    res.status(200).json({ msg: 'Success! Password reset' });
+};
 
 module.exports = {
     register,
