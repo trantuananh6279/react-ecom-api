@@ -1,7 +1,7 @@
 const multiparty = require('multiparty');
 const fs = require('fs');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const bucketName = 'react-next-ecom';
+const bucketName = 'tta-next-ecom';
 const mime = require('mime-types');
 
 const uploadImage = async (req, res) => {
