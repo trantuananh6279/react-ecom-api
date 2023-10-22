@@ -18,6 +18,7 @@ const cartRouter = require('./routers/cartRouter');
 const checkoutRouter = require('./routers/checkoutRouter');
 const addressRouter = require('./routers/addressRouter');
 const webhookRouter = require('./routers/webhookRouter');
+const wishedProductRouter = require('./routers/wishedProductRouter');
 // const orderRouter = require('./routers/orderRouter')
 
 app.use('/webhook', webhookRouter);
@@ -37,6 +38,7 @@ app.use('/api/v1/upload', uploadRouter);
 app.use('/api/v1/carts', cartRouter);
 app.use('/api/v1/checkout', authenticateUser, checkoutRouter);
 app.use('/api/v1/address', authenticateUser, addressRouter);
+app.use('/api/v1/wish-list', authenticateUser, wishedProductRouter);
 // app.use('/webhook', webhookRouter);
 // app.use('/api/v1/orders', orderRouter);
 
