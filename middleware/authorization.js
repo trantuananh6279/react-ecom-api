@@ -15,4 +15,12 @@ const authenticateUser = async (req, res, next) => {
     }
 };
 
-module.exports = authenticateUser;
+const getUserEmailFromRequest = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { userEmail: payload.userEmail };
+    next();
+};
+
+module.exports = { authenticateUser, getUserEmailFromRequest };

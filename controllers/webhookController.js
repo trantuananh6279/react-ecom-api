@@ -21,7 +21,6 @@ const updateOrder = async (req, res) => {
         return;
     }
 
-    // Handle the event
     switch (event.type) {
         case 'checkout.session.completed':
             const data = event.data.object;
