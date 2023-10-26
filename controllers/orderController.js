@@ -1,9 +1,8 @@
 const Order = require('../models/Order');
 
 const getAllOrders = async (req, res) => {
-    await Order.find().sort('-createdAt');
+    const orders = await Order.find().sort('-createdAt');
+    res.status(200).json(orders);
 };
 
-const createOrder = async (req, res) => {};
-
-module.exports = { getAllOrders, createOrder };
+module.exports = { getAllOrders };

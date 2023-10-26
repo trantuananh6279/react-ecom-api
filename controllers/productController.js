@@ -16,7 +16,10 @@ const getAllProducts = async (req, res) => {
         queryObject.price = { $lte: price };
     }
 
-    let results = Product.find(queryObject);
+    let results = Product.find(queryObject).populate({
+        path: 'wishedProduct',
+        match: { userEmail: req.user.userEmail },
+    });
     if (sort === 'price-lowest') {
         results = results.sort('price');
     }
@@ -36,12 +39,31 @@ const getAllProducts = async (req, res) => {
 
 const getSingleProduct = async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findOne({ _id: id });
+    const product = await Product.findOne({ _id: id }).populate({
+        path: 'wishedProduct',
+        match: { userEmail: req.user.userEmail },
+    });
     if (!product) {
         res.status(400).json({ msg: `No product with id ${id}` });
         return;
     }
     res.status(200).json(product);
+};
+
+const getFeaturedProducts = async (req, res) => {
+    const featuredProducts = await Product.find({ featured: true }).populate({
+        path: 'wishedProduct',
+        match: { userEmail: req.user.userEmail },
+    });
+
+    res.status(200).json(featuredProducts);
+};
+
+const getMaxPrice = async (req, res) => {
+    let product = await Product.find();
+    let maxPrice = product.map((p) => p.price);
+    maxPrice = Math.max(...maxPrice);
+    res.status(200).json(maxPrice);
 };
 
 const createProduct = async (req, res) => {
@@ -90,6 +112,8 @@ const deleteProduct = async (req, res) => {
 module.exports = {
     getAllProducts,
     getSingleProduct,
+    getFeaturedProducts,
+    getMaxPrice,
     createProduct,
     updateProduct,
     deleteProduct,
