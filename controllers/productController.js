@@ -15,11 +15,16 @@ const getAllProducts = async (req, res) => {
     if (price) {
         queryObject.price = { $lte: price };
     }
+    let results = [];
+    if (req.user.userEmail) {
+        results = Product.find(queryObject).populate({
+            path: 'wishedProduct',
+            match: { userEmail: req.user.userEmail },
+        });
+    } else {
+        results = Product.find(queryObject);
+    }
 
-    let results = Product.find(queryObject).populate({
-        path: 'wishedProduct',
-        match: { userEmail: req.user.userEmail },
-    });
     if (sort === 'price-lowest') {
         results = results.sort('price');
     }
@@ -39,10 +44,15 @@ const getAllProducts = async (req, res) => {
 
 const getSingleProduct = async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findOne({ _id: id }).populate({
-        path: 'wishedProduct',
-        match: { userEmail: req.user.userEmail },
-    });
+    let product = [];
+    if (req.user.userEmail) {
+        product = await Product.findOne({ _id: id }).populate({
+            path: 'wishedProduct',
+            match: { userEmail: req.user.userEmail },
+        });
+    } else {
+        product = await Product.findOne({ _id: id });
+    }
     if (!product) {
         res.status(400).json({ msg: `No product with id ${id}` });
         return;
@@ -51,10 +61,15 @@ const getSingleProduct = async (req, res) => {
 };
 
 const getFeaturedProducts = async (req, res) => {
-    const featuredProducts = await Product.find({ featured: true }).populate({
-        path: 'wishedProduct',
-        match: { userEmail: req.user.userEmail },
-    });
+    let featuredProducts = [];
+    if (req.user.userEmail) {
+        featuredProducts = await Product.find({ featured: true }).populate({
+            path: 'wishedProduct',
+            match: { userEmail: req.user.userEmail },
+        });
+    } else {
+        featuredProducts = await Product.find({ featured: true });
+    }
 
     res.status(200).json(featuredProducts);
 };
